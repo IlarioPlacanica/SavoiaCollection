@@ -55,6 +55,7 @@ counters.forEach((counter) => counterObserver.observe(counter));
 
 contactForm.addEventListener("submit", (event) => {
   event.preventDefault();
+
   const formData = new FormData(contactForm);
   const name = formData.get("name").toString().trim();
 

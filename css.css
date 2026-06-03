@@ -109,7 +109,7 @@ textarea {
 }
 
 .hero__media {
-  background-image: url("https://images.unsplash.com/photo-1757361653037-dbf0d0a820ae?auto=format&fit=crop&w=2400&q=84");
+  background-image: url("assets/img/02_Ville.jpg");
   background-position: 56% 50%;
   background-size: cover;
   filter: saturate(0.84) contrast(0.92);

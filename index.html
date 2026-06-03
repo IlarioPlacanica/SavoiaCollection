@@ -8,9 +8,8 @@
       content="Savoia Collection, landing page luxury real estate dal layout editoriale e immersivo."
     />
     <title>Savoia Collection | Luxury Real Estate</title>
-    <link rel="preconnect" href="https://images.unsplash.com" />
-    <link rel="stylesheet" href="index.css" />
-    <script defer src="index.js"></script>
+    <link rel="stylesheet" href="css.css" />
+    <script defer src="script.js"></script>
   </head>
   <body>
     <header class="site-header" data-header>
@@ -28,17 +27,10 @@
         <div class="hero__shade"></div>
 
         <div class="hero__grid">
-          <p class="hero__caption reveal">A new address for private residences, designed for discretion.</p>
-
           <h1 class="hero__title reveal" id="hero-title">
             <span>Savoia</span>
             <span>Collection</span>
           </h1>
-
-          <p class="hero__text reveal">
-            Portfolio riservato di ville, attici e tenute con advisory dedicata, accesso off-market e gestione completa
-            della trattativa.
-          </p>
 
           <a class="round-link reveal" href="#district" aria-label="Scopri il distretto">
             <span>View</span>
@@ -50,11 +42,6 @@
             <span></span>
             <span></span>
           </div>
-
-          <p class="amenities__label reveal">All Savoia residences include</p>
-          <p class="amenities__line reveal">
-            garden, private lounge, spa and massage, gym, pool, sauna, concierge and 24 hours security
-          </p>
 
           <div class="hero__stats reveal" aria-label="Dati principali">
             <article>
@@ -88,11 +75,13 @@
             <h3>shops</h3>
             <p>Montenapoleone 4 min by car<br />Food market 6 min by foot</p>
           </article>
+
           <article class="district-row reveal">
             <span class="district-row__index">02</span>
             <h3>schools</h3>
             <p>International school 9 min by car<br />Private campus 12 min by car</p>
           </article>
+
           <article class="district-row reveal">
             <span class="district-row__index">03</span>
             <h3>restaurants</h3>
@@ -107,16 +96,19 @@
             src="https://images.unsplash.com/photo-1757439402359-aed14d39fc1b?auto=format&fit=crop&w=1600&q=80"
             alt="Piscina privata con pergolato e lettini in una villa di lusso"
           />
+
           <h2 id="standard-title">
             <span>The best</span>
             <span>comes</span>
             <span>as</span>
             <span>standard</span>
           </h2>
+
           <p>
             Residenze selezionate per architettura, luce, materiali, privacy e continuita dei servizi. Ogni dettaglio
             e pensato per trasformare l'acquisto in un'esperienza fluida.
           </p>
+
           <a class="round-link round-link--dark" href="#contact" aria-label="Contatta Savoia Collection">
             <span>Ask</span>
           </a>
@@ -135,11 +127,13 @@
             <h3>Villa Aurora</h3>
             <p>980 mq, 6 suite, molo privato</p>
           </article>
+
           <article class="portfolio-item reveal">
             <span>Milano</span>
             <h3>Palazzo Brera</h3>
             <p>420 mq, attico doppia altezza, concierge</p>
           </article>
+
           <article class="portfolio-item reveal">
             <span>Mediterraneo</span>
             <h3>Casa Roccia</h3>
@@ -162,10 +156,12 @@
             Nome
             <input id="contact-name" type="text" name="name" placeholder="Il tuo nome" required />
           </label>
+
           <label for="contact-email">
             Email
             <input id="contact-email" type="email" name="email" placeholder="nome@email.com" required />
           </label>
+
           <label for="contact-interest">
             Interesse
             <select id="contact-interest" name="interest" required>
@@ -176,10 +172,12 @@
               <option>Mandato off-market</option>
             </select>
           </label>
+
           <label for="contact-message">
             Messaggio
             <textarea id="contact-message" name="message" rows="4" placeholder="Budget, area e tempistiche"></textarea>
           </label>
+
           <button class="submit-button" type="submit">Invia richiesta</button>
           <p class="form-status" role="status" data-form-status></p>
         </form>
