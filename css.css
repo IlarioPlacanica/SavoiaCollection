@@ -59,12 +59,14 @@ textarea {
   width: 100%;
   padding: 24px 64px;
   color: var(--white);
-  mix-blend-mode: normal;
+  /* difference blend keeps the header legible over the dark AND the paper sections */
+  mix-blend-mode: difference;
   pointer-events: none;
+  transition: transform 700ms cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-.site-header.is-scrolled {
-  color: var(--ink);
+.site-header.is-hidden {
+  transform: translateY(-110%);
 }
 
 .brand,
@@ -109,7 +111,7 @@ textarea {
 }
 
 .hero__media {
-  background-image: url("assets/img/02_Ville.jpg");
+  background-image: url("assets/img/ville/02_Ville.jpg");
   background-position: 56% 50%;
   background-size: cover;
   filter: saturate(0.84) contrast(0.92);
@@ -142,7 +144,7 @@ textarea {
   letter-spacing: 0;
 }
 
-.hero__title span {
+.hero__title > span {
   display: block;
 }
 
@@ -275,8 +277,8 @@ textarea {
 
 .district__header span,
 .district-row__index,
-.portfolio__title span,
-.contact__intro span {
+.portfolio__title > span,
+.contact__intro > span {
   color: rgba(244, 240, 234, 0.48);
   font-size: 0.76rem;
 }
@@ -405,8 +407,8 @@ textarea {
   margin-bottom: 48px;
 }
 
-.portfolio__title span,
-.contact__intro span {
+.portfolio__title > span,
+.contact__intro > span {
   color: rgba(24, 21, 18, 0.48);
 }
 
@@ -428,7 +430,7 @@ textarea {
   overflow: hidden;
   border-bottom: 1px solid var(--dark-line);
   cursor: pointer;
-  transition: min-height 420ms ease, background 420ms ease;
+  transition: background 420ms ease;
 }
 
 .portfolio-item__summary {
@@ -455,36 +457,26 @@ textarea {
   font-size: 0.92rem;
 }
 
+/* Accordion: the panel height is animated by script.js (GSAP); without JS motion it simply toggles */
 .portfolio-item__expanded {
+  height: 0;
+  overflow: hidden;
+}
+
+.portfolio-item__expanded-inner {
   display: grid;
   grid-template-columns: minmax(260px, 0.78fr) minmax(360px, 1.22fr);
   gap: 48px;
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-  padding: 0;
-  transform: translateY(18px);
-  transition:
-    max-height 520ms ease,
-    opacity 360ms ease,
-    padding 420ms ease,
-    transform 420ms ease;
+  padding: 8px 0 48px;
 }
 
 .portfolio-item:hover,
-.portfolio-item:focus-within,
 .portfolio-item.is-open {
-  min-height: 560px;
   background: rgba(24, 21, 18, 0.04);
 }
 
-.portfolio-item:hover .portfolio-item__expanded,
-.portfolio-item:focus-within .portfolio-item__expanded,
 .portfolio-item.is-open .portfolio-item__expanded {
-  max-height: 620px;
-  opacity: 1;
-  padding: 8px 0 48px;
-  transform: translateY(0);
+  height: auto;
 }
 
 .portfolio-item__text {
@@ -888,21 +880,9 @@ textarea {
     padding: 30px 0;
   }
 
-  .portfolio-item__expanded {
+  .portfolio-item__expanded-inner {
     grid-template-columns: 1fr;
     gap: 28px;
-  }
-
-  .portfolio-item:hover,
-  .portfolio-item:focus-within,
-  .portfolio-item.is-open {
-    min-height: 740px;
-  }
-
-  .portfolio-item:hover .portfolio-item__expanded,
-  .portfolio-item:focus-within .portfolio-item__expanded,
-  .portfolio-item.is-open .portfolio-item__expanded {
-    max-height: 820px;
     padding: 0 0 38px;
   }
 
@@ -942,18 +922,6 @@ textarea {
     font-size: clamp(2.5rem, 13vw, 4.4rem);
   }
 
-  .portfolio-item:hover,
-  .portfolio-item:focus-within,
-  .portfolio-item.is-open {
-    min-height: 700px;
-  }
-
-  .portfolio-item:hover .portfolio-item__expanded,
-  .portfolio-item:focus-within .portfolio-item__expanded,
-  .portfolio-item.is-open .portfolio-item__expanded {
-    max-height: 760px;
-  }
-
   .portfolio-carousel {
     height: 260px;
   }
@@ -985,5 +953,619 @@ textarea {
   .reveal {
     opacity: 1;
     transform: none;
+  }
+}
+
+/* =====================================================================
+   MOTION LAYER
+   Everything below adds motion/interaction on top of the editorial
+   layout above. `.has-motion` is set by script.js only when GSAP loaded
+   and reduced motion is not requested; `.has-cursor` only on
+   fine-pointer (mouse) devices.
+   ===================================================================== */
+
+:root {
+  --ease-out: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-inout: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+/* --- Lenis smooth scroll ------------------------------------------- */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* --- Intro curtain --------------------------------------------------- */
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: none;
+  place-content: center;
+  justify-items: center;
+  gap: 22px;
+  color: var(--white);
+  background: var(--ink);
+  pointer-events: none;
+}
+
+.is-loading .intro,
+.intro-running .intro {
+  display: grid;
+}
+
+.intro__brand {
+  display: block;
+  overflow: hidden;
+  font-size: clamp(1.6rem, 3.4vw, 2.8rem);
+  font-weight: 300;
+  line-height: 1.1;
+}
+
+.intro__line {
+  display: block;
+  width: 160px;
+  height: 1px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+/* --- Utilities ------------------------------------------------------- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.has-cursor,
+.has-cursor * {
+  cursor: none !important;
+}
+
+.has-cursor input,
+.has-cursor textarea {
+  cursor: text !important;
+}
+
+.has-cursor select {
+  cursor: default !important;
+}
+
+/* --- Split text ------------------------------------------------------ */
+.split-word {
+  display: inline-block;
+  overflow: hidden;
+  /* room for descenders under the tight editorial line-heights */
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+.split-word__inner,
+.split-char {
+  display: inline-block;
+  will-change: transform;
+}
+
+/* --- Scroll progress ------------------------------------------------- */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 40;
+  width: 100%;
+  height: 2px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  pointer-events: none;
+}
+
+/* --- Header & links -------------------------------------------------- */
+.site-nav a,
+.site-footer a {
+  border-bottom: 0;
+  background: linear-gradient(currentColor, currentColor) 100% 100% / 0 1px no-repeat;
+  transition: background-size 600ms var(--ease-out);
+}
+
+.site-footer a {
+  background-position: 0 100%;
+  background-size: 100% 1px;
+}
+
+.site-nav a:hover,
+.site-nav a:focus-visible {
+  background-position: 0 100%;
+  background-size: 100% 1px;
+}
+
+.site-footer a:hover,
+.site-footer a:focus-visible {
+  background-position: 100% 100%;
+  background-size: 0 1px;
+}
+
+.roll {
+  display: inline-block;
+  height: 1.2em;
+  overflow: hidden;
+  vertical-align: top;
+}
+
+.roll__inner {
+  display: grid;
+  transition: transform 650ms var(--ease-out);
+}
+
+a:hover .roll__inner,
+a:focus-visible .roll__inner {
+  transform: translateY(-50%);
+}
+
+/* --- Section indicator (former hero dots) ---------------------------- */
+.has-motion .hero__dots {
+  position: fixed;
+  top: 50%;
+  right: 64px;
+  z-index: 31;
+  mix-blend-mode: difference;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.has-motion .hero__dots span {
+  opacity: 0.45;
+  transition: height 700ms var(--ease-out), opacity 700ms var(--ease-out);
+}
+
+.has-motion .hero__dots span.is-active {
+  height: 22px;
+  border-radius: 2px;
+  opacity: 1;
+}
+
+/* --- Generic reveal is replaced by bespoke GSAP choreography --------- */
+.has-motion .reveal {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+/* --- Hero ------------------------------------------------------------ */
+.hero__media,
+.hero__title > span {
+  will-change: transform;
+}
+
+/* --- Standard section ------------------------------------------------ */
+.standard__media {
+  position: absolute;
+  bottom: 92px;
+  left: 0;
+  width: 86%;
+  height: 470px;
+  overflow: hidden;
+}
+
+.standard__canvas .standard__media img {
+  position: absolute;
+  top: -8%;
+  bottom: auto;
+  left: 0;
+  width: 100%;
+  height: 116%;
+  will-change: transform;
+}
+
+/* --- Round link & magnetic ------------------------------------------- */
+.round-link {
+  overflow: hidden;
+  transition: background 400ms var(--ease-out), box-shadow 400ms var(--ease-out);
+}
+
+.hero .round-link {
+  position: relative;
+}
+
+.round-link::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--gold);
+  border-radius: inherit;
+  transform: scale(0);
+  transition: transform 600ms var(--ease-out);
+}
+
+.round-link:hover::before,
+.round-link:focus-visible::before {
+  transform: scale(1);
+}
+
+.round-link span {
+  position: relative;
+}
+
+.round-link:hover,
+.round-link:focus-visible {
+  transform: none;
+}
+
+/* --- Portfolio ------------------------------------------------------- */
+.portfolio-item {
+  position: relative;
+}
+
+.has-motion .portfolio-item {
+  border-bottom-color: transparent;
+}
+
+.has-motion .portfolio-item::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  background: var(--dark-line);
+  transform: scaleX(var(--line, 1));
+  transform-origin: left;
+}
+
+.portfolio-item__summary {
+  padding-right: 56px;
+}
+
+.portfolio-item__summary > * {
+  transition: transform 800ms var(--ease-out), color 500ms ease;
+}
+
+.portfolio-item:hover .portfolio-item__summary h3,
+.portfolio-item__summary:focus-visible h3,
+.portfolio-item.is-open .portfolio-item__summary h3 {
+  transform: translateX(24px);
+}
+
+.portfolio-item:hover .portfolio-item__summary span,
+.portfolio-item.is-open .portfolio-item__summary span {
+  color: var(--ink);
+}
+
+.portfolio-item__summary:focus-visible {
+  outline: 1px solid var(--ink);
+  outline-offset: 4px;
+}
+
+.portfolio-carousel__meta span {
+  color: inherit;
+}
+
+.portfolio-item__toggle {
+  position: absolute;
+  top: 52px;
+  right: 4px;
+  width: 22px;
+  height: 22px;
+  transition: transform 800ms var(--ease-out);
+}
+
+.portfolio-item__toggle::before,
+.portfolio-item__toggle::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--ink);
+}
+
+.portfolio-item__toggle::after {
+  transform: rotate(90deg);
+}
+
+.portfolio-item:hover .portfolio-item__toggle {
+  transform: rotate(90deg);
+}
+
+.portfolio-item.is-open .portfolio-item__toggle {
+  transform: rotate(135deg);
+}
+
+/* carousel */
+.portfolio-carousel__track {
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.portfolio-carousel__track img {
+  -webkit-user-drag: none;
+}
+
+.has-motion .portfolio-carousel__track img {
+  opacity: 1;
+  transform: none;
+  transition: none;
+  clip-path: inset(0 0 0 100%);
+}
+
+.has-motion .portfolio-carousel__track img.is-active {
+  z-index: 1;
+  clip-path: inset(0 0 0 0);
+}
+
+.portfolio-carousel__meta {
+  position: absolute;
+  right: 80px;
+  bottom: 20px;
+  left: 80px;
+  z-index: 3;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  color: var(--white);
+  font-size: 0.74rem;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
+.portfolio-carousel__bar {
+  position: relative;
+  flex: 1;
+  height: 1px;
+  background: rgba(244, 240, 234, 0.35);
+}
+
+.portfolio-carousel__bar i {
+  position: absolute;
+  inset: 0;
+  background: var(--white);
+  transform: scaleX(var(--progress, 0));
+  transform-origin: left;
+  transition: transform 900ms var(--ease-out);
+}
+
+.portfolio-carousel__button {
+  transition: background 300ms ease, color 300ms ease;
+}
+
+.portfolio-carousel__button:hover,
+.portfolio-carousel__button:focus-visible {
+  color: var(--white);
+  background: var(--ink);
+}
+
+/* Hover preview that trails the cursor over the residence list */
+.hover-preview {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 25;
+  display: none;
+  width: 280px;
+  height: 360px;
+  margin: -180px 0 0 -140px;
+  overflow: hidden;
+  pointer-events: none;
+  clip-path: inset(50% 50% 50% 50%);
+  will-change: transform, clip-path;
+}
+
+.has-cursor .hover-preview {
+  display: block;
+}
+
+.hover-preview__inner,
+.hover-preview__inner img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hover-preview__inner img {
+  object-fit: cover;
+}
+
+/* --- Contact --------------------------------------------------------- */
+.contact-form label {
+  position: relative;
+}
+
+.field-line {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 800ms var(--ease-out);
+  pointer-events: none;
+}
+
+.contact-form label:focus-within .field-line {
+  transform: scaleX(1);
+}
+
+.contact-form textarea + .field-line {
+  bottom: 4px;
+}
+
+.submit-button {
+  position: relative;
+  overflow: hidden;
+  transition: color 500ms var(--ease-out);
+}
+
+.submit-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--field);
+  transform: translateY(101%);
+  transition: transform 700ms var(--ease-out);
+}
+
+.submit-button span {
+  position: relative;
+}
+
+.submit-button:hover,
+.submit-button:focus-visible {
+  background: var(--ink);
+}
+
+.submit-button:hover::before,
+.submit-button:focus-visible::before {
+  transform: translateY(0);
+}
+
+/* --- Custom cursor (mouse only) -------------------------------------- */
+.cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 90;
+  display: none;
+  pointer-events: none;
+}
+
+.has-cursor .cursor {
+  display: block;
+}
+
+.cursor__dot,
+.cursor__ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  will-change: transform;
+}
+
+.cursor__dot {
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  background: var(--white);
+  mix-blend-mode: difference;
+  transition: opacity 300ms ease;
+}
+
+.cursor__ring {
+  --size: 38px;
+  display: grid;
+  place-items: center;
+  width: var(--size);
+  height: var(--size);
+  margin: calc(var(--size) / -2) 0 0 calc(var(--size) / -2);
+  border: 1px solid rgba(244, 240, 234, 0.7);
+  mix-blend-mode: difference;
+  transition:
+    width 500ms var(--ease-out),
+    height 500ms var(--ease-out),
+    margin 500ms var(--ease-out),
+    background 400ms ease,
+    border-color 400ms ease,
+    opacity 300ms ease;
+}
+
+.cursor__label {
+  color: var(--ink);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 300ms ease, transform 500ms var(--ease-out);
+}
+
+.cursor.is-hover .cursor__ring {
+  --size: 64px;
+  border-color: rgba(244, 240, 234, 0.4);
+}
+
+.cursor.is-hidden .cursor__ring,
+.cursor.is-hidden .cursor__dot {
+  opacity: 0;
+}
+
+.cursor.has-label .cursor__ring {
+  --size: 86px;
+  background: var(--white);
+  border-color: var(--white);
+  mix-blend-mode: normal;
+}
+
+.cursor.has-label .cursor__dot {
+  opacity: 0;
+}
+
+.cursor.has-label .cursor__label {
+  opacity: 1;
+  transform: none;
+}
+
+/* --- Responsive adjustments for the motion layer --------------------- */
+@media (max-width: 980px) {
+  .has-motion .hero__dots {
+    right: 32px;
+  }
+}
+
+@media (max-width: 680px) {
+  .has-motion .hero__dots {
+    right: 10px;
+  }
+
+  .standard__media {
+    bottom: 112px;
+    width: 100%;
+    height: 330px;
+  }
+
+  .portfolio-item__summary {
+    padding-right: 40px;
+  }
+
+  .portfolio-item__toggle {
+    top: 38px;
+    width: 18px;
+    height: 18px;
+  }
+
+  .portfolio-carousel__meta {
+    right: 64px;
+    bottom: 16px;
+    left: 64px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro,
+  .cursor,
+  .hover-preview {
+    display: none !important;
   }
 }

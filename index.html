@@ -8,10 +8,36 @@
       content="Savoia Collection, landing page luxury real estate dal layout editoriale e immersivo."
     />
     <title>Savoia Collection | Luxury Real Estate</title>
+    <link rel="preload" as="image" href="assets/img/ville/02_Ville.jpg" fetchpriority="high" />
     <link rel="stylesheet" href="css.css" />
+    <script>
+      /* Hide the hero until the intro timeline takes over; never longer than 2.5s */
+      (function (d) {
+        var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (reduce) return;
+        d.classList.add("is-loading");
+        setTimeout(function () { d.classList.remove("is-loading"); }, 2500);
+      })(document.documentElement);
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
     <script defer src="script.js"></script>
   </head>
   <body>
+    <div class="intro" aria-hidden="true" data-intro>
+      <span class="intro__brand">Savoia</span>
+      <span class="intro__line"></span>
+    </div>
+    <div class="scroll-progress" aria-hidden="true" data-progress></div>
+    <div class="cursor" aria-hidden="true" data-cursor>
+      <span class="cursor__ring"><span class="cursor__label" data-cursor-label></span></span>
+      <span class="cursor__dot"></span>
+    </div>
+    <div class="hover-preview" aria-hidden="true" data-preview>
+      <div class="hover-preview__inner" data-preview-inner></div>
+    </div>
+
     <header class="site-header" data-header>
       <a class="brand" href="#top" aria-label="Savoia Collection">Savoia</a>
       <nav class="site-nav" aria-label="Navigazione principale">
@@ -66,10 +92,9 @@
 
       <section class="standard" id="gallery" aria-labelledby="standard-title">
         <div class="standard__canvas reveal">
-          <img
-            src="assets/img/castello/castello_01.jpg"
-            alt="Terrazza Castello"
-          />
+          <div class="standard__media" data-standard-media>
+            <img src="assets/img/castello/castello_01.jpg" alt="Terrazza Castello" decoding="async" />
+          </div>
 
           <h2 id="standard-title">
             <span>The best</span>
@@ -99,29 +124,31 @@
             </div>
 
             <div class="portfolio-item__expanded">
-              <div class="portfolio-item__text">
-                <p>
-                  Una residenza di rappresentanza nel cuore storico di Torino, con spazi ampi, doppia altezza e terrazzo
-                  privato. Pensata per chi cerca un indirizzo iconico, servizi riservati e una vista urbana di grande carattere.
-                </p>
-                <ul>
-                  <li>Attico doppia altezza</li>
-                  <li>Terrazzo panoramico</li>
-                  <li>Finiture su misura</li>
-                  <li>Privacy e accesso riservato</li>
-                </ul>
-              </div>
-
-              <div class="portfolio-carousel" data-carousel>
-                <button class="portfolio-carousel__button portfolio-carousel__button--prev" type="button" aria-label="Immagine precedente">‹</button>
-              <div class="portfolio-carousel__track">
-                <img class="is-active" src="assets/img/castello/castello_01.jpg" alt="Castello immagine 1" />
-                <img src="assets/img/castello/castello_02.jpg" alt="Castello immagine 2" />
-                <img src="assets/img/castello/castello_03.jpg" alt="Castello immagine 3" />
-                <img src="assets/img/castello/castello_04.jpg" alt="Castello immagine 4" />
-                <img src="assets/img/castello/castello_05.jpg" alt="Castello immagine 5" />
-              </div>
-                <button class="portfolio-carousel__button portfolio-carousel__button--next" type="button" aria-label="Immagine successiva">›</button>
+              <div class="portfolio-item__expanded-inner">
+                <div class="portfolio-item__text">
+                  <p>
+                    Una residenza di rappresentanza nel cuore storico di Torino, con spazi ampi, doppia altezza e terrazzo
+                    privato. Pensata per chi cerca un indirizzo iconico, servizi riservati e una vista urbana di grande carattere.
+                  </p>
+                  <ul>
+                    <li>Attico doppia altezza</li>
+                    <li>Terrazzo panoramico</li>
+                    <li>Finiture su misura</li>
+                    <li>Privacy e accesso riservato</li>
+                  </ul>
+                </div>
+  
+                <div class="portfolio-carousel" data-carousel>
+                  <button class="portfolio-carousel__button portfolio-carousel__button--prev" type="button" aria-label="Immagine precedente">‹</button>
+                <div class="portfolio-carousel__track">
+                  <img loading="lazy" decoding="async" class="is-active" src="assets/img/castello/castello_01.jpg" alt="Castello immagine 1" />
+                  <img loading="lazy" decoding="async" src="assets/img/castello/castello_02.jpg" alt="Castello immagine 2" />
+                  <img loading="lazy" decoding="async" src="assets/img/castello/castello_03.jpg" alt="Castello immagine 3" />
+                  <img loading="lazy" decoding="async" src="assets/img/castello/castello_04.jpg" alt="Castello immagine 4" />
+                  <img loading="lazy" decoding="async" src="assets/img/castello/castello_05.jpg" alt="Castello immagine 5" />
+                </div>
+                  <button class="portfolio-carousel__button portfolio-carousel__button--next" type="button" aria-label="Immagine successiva">›</button>
+                </div>
               </div>
             </div>
           </article>
@@ -134,27 +161,29 @@
             </div>
 
             <div class="portfolio-item__expanded">
-              <div class="portfolio-item__text">
-                <p>
-                  Ville indipendenti immerse nel verde, progettate per un equilibrio tra comfort contemporaneo, privacy e
-                  continuita con il giardino. Ogni unita valorizza luce naturale, spazi esterni e servizi privati.
-                </p>
-                <ul>
-                  <li>Villa indipendente</li>
-                  <li>Giardino privato</li>
-                  <li>Living aperto verso l'esterno</li>
-                  <li>Area wellness e sicurezza</li>
-                </ul>
-              </div>
-
-              <div class="portfolio-carousel" data-carousel>
-                <button class="portfolio-carousel__button portfolio-carousel__button--prev" type="button" aria-label="Immagine precedente">‹</button>
-                <div class="portfolio-carousel__track">
-                  <img class="is-active" src="assets/img/ville/01_Ville.jpg" alt="Sei Ville esterno" />
-                  <img src="assets/img/ville/02_Ville.jpg" alt="Sei Ville giardino" />
-                  <img src="assets/img/ville/03_Ville.jpg" alt="Sei Ville dettaglio architettonico" />
+              <div class="portfolio-item__expanded-inner">
+                <div class="portfolio-item__text">
+                  <p>
+                    Ville indipendenti immerse nel verde, progettate per un equilibrio tra comfort contemporaneo, privacy e
+                    continuita con il giardino. Ogni unita valorizza luce naturale, spazi esterni e servizi privati.
+                  </p>
+                  <ul>
+                    <li>Villa indipendente</li>
+                    <li>Giardino privato</li>
+                    <li>Living aperto verso l'esterno</li>
+                    <li>Area wellness e sicurezza</li>
+                  </ul>
                 </div>
-                <button class="portfolio-carousel__button portfolio-carousel__button--next" type="button" aria-label="Immagine successiva">›</button>
+  
+                <div class="portfolio-carousel" data-carousel>
+                  <button class="portfolio-carousel__button portfolio-carousel__button--prev" type="button" aria-label="Immagine precedente">‹</button>
+                  <div class="portfolio-carousel__track">
+                    <img loading="lazy" decoding="async" class="is-active" src="assets/img/ville/01_Ville.jpg" alt="Sei Ville esterno" />
+                    <img loading="lazy" decoding="async" src="assets/img/ville/02_Ville.jpg" alt="Sei Ville giardino" />
+                    <img loading="lazy" decoding="async" src="assets/img/ville/03_Ville.jpg" alt="Sei Ville dettaglio architettonico" />
+                  </div>
+                  <button class="portfolio-carousel__button portfolio-carousel__button--next" type="button" aria-label="Immagine successiva">›</button>
+                </div>
               </div>
             </div>
           </article>
@@ -167,31 +196,33 @@
             </div>
 
             <div class="portfolio-item__expanded">
-              <div class="portfolio-item__text">
-                <p>
-                  Una proposta urbana dal carattere scenografico, con aree wellness, piscina e affacci verso le colline.
-                  La residenza combina dimensioni generose, atmosfera privata e una forte identita architettonica.
-                </p>
-                <ul>
-                  <li>Piscina notturna</li>
-                  <li>Vista colline</li>
-                  <li>Spazi di rappresentanza</li>
-                  <li>Servizi privati integrati</li>
-                </ul>
-              </div>
-
-              <div class="portfolio-carousel" data-carousel>
-                <button class="portfolio-carousel__button portfolio-carousel__button--prev" type="button" aria-label="Immagine precedente">‹</button>
-                <div class="portfolio-carousel__track">
-                  <img class="is-active" src="assets/img/pacioli_B51/B51_01.jpg" alt="Palazzo Pacioli immagine 1" />
-                  <img src="assets/img/pacioli_B51/B51_02.jpg" alt="Palazzo Pacioli immagine 2" />
-                  <img src="assets/img/pacioli_B51/B51_03.jpg" alt="Palazzo Pacioli immagine 3" />
-                  <img src="assets/img/pacioli_B51/B51_04.jpg" alt="Palazzo Pacioli immagine 4" />
-                  <img src="assets/img/pacioli_B51/B51_05.jpg" alt="Palazzo Pacioli immagine 5" />
-                  <img src="assets/img/pacioli_B51/B51_06.jpg" alt="Palazzo Pacioli immagine 6" />
-                  <img src="assets/img/pacioli_B51/B51_07.jpg" alt="Palazzo Pacioli immagine 7" />
+              <div class="portfolio-item__expanded-inner">
+                <div class="portfolio-item__text">
+                  <p>
+                    Una proposta urbana dal carattere scenografico, con aree wellness, piscina e affacci verso le colline.
+                    La residenza combina dimensioni generose, atmosfera privata e una forte identita architettonica.
+                  </p>
+                  <ul>
+                    <li>Piscina notturna</li>
+                    <li>Vista colline</li>
+                    <li>Spazi di rappresentanza</li>
+                    <li>Servizi privati integrati</li>
+                  </ul>
                 </div>
-                <button class="portfolio-carousel__button portfolio-carousel__button--next" type="button" aria-label="Immagine successiva">›</button>
+  
+                <div class="portfolio-carousel" data-carousel>
+                  <button class="portfolio-carousel__button portfolio-carousel__button--prev" type="button" aria-label="Immagine precedente">‹</button>
+                  <div class="portfolio-carousel__track">
+                    <img loading="lazy" decoding="async" class="is-active" src="assets/img/pacioli_B51/B51_01.jpg" alt="Palazzo Pacioli immagine 1" />
+                    <img loading="lazy" decoding="async" src="assets/img/pacioli_B51/B51_02.jpg" alt="Palazzo Pacioli immagine 2" />
+                    <img loading="lazy" decoding="async" src="assets/img/pacioli_B51/B51_03.jpg" alt="Palazzo Pacioli immagine 3" />
+                    <img loading="lazy" decoding="async" src="assets/img/pacioli_B51/B51_04.jpg" alt="Palazzo Pacioli immagine 4" />
+                    <img loading="lazy" decoding="async" src="assets/img/pacioli_B51/B51_05.jpg" alt="Palazzo Pacioli immagine 5" />
+                    <img loading="lazy" decoding="async" src="assets/img/pacioli_B51/B51_06.jpg" alt="Palazzo Pacioli immagine 6" />
+                    <img loading="lazy" decoding="async" src="assets/img/pacioli_B51/B51_07.jpg" alt="Palazzo Pacioli immagine 7" />
+                  </div>
+                  <button class="portfolio-carousel__button portfolio-carousel__button--next" type="button" aria-label="Immagine successiva">›</button>
+                </div>
               </div>
             </div>
           </article>
@@ -205,31 +236,33 @@
             </div>
 
             <div class="portfolio-item__expanded">
-              <div class="portfolio-item__text">
-                <p>
-                  Una proposta urbana dal carattere scenografico, con aree wellness, piscina e affacci verso le colline.
-                  La residenza combina dimensioni generose, atmosfera privata e una forte identita architettonica.
-                </p>
-                <ul>
-                  <li>Piscina notturna</li>
-                  <li>Vista colline</li>
-                  <li>Spazi di rappresentanza</li>
-                  <li>Servizi privati integrati</li>
-                </ul>
-              </div>
-
-              <div class="portfolio-carousel" data-carousel>
-                <button class="portfolio-carousel__button portfolio-carousel__button--prev" type="button" aria-label="Immagine precedente">‹</button>
-                <div class="portfolio-carousel__track">
-                  <img class="is-active" src="assets/img/pacioli_B52/B52_01.png" alt="Palazzo Pacioli immagine 1" />
-                  <img src="assets/img/pacioli_B52/B52_02.png" alt="Palazzo Pacioli immagine 2" />
-                  <img src="assets/img/pacioli_B52/B52_03.jpg" alt="Palazzo Pacioli immagine 3" />
-                  <img src="assets/img/pacioli_B52/B52_04.jpg" alt="Palazzo Pacioli immagine 4" />
-                  <img src="assets/img/pacioli_B52/B52_05.jpg" alt="Palazzo Pacioli immagine 5" />
-                  <img src="assets/img/pacioli_B52/B52_06.jpg" alt="Palazzo Pacioli immagine 6" />
-                  <img src="assets/img/pacioli_B52/B52_07.jpg" alt="Palazzo Pacioli immagine 7" />
+              <div class="portfolio-item__expanded-inner">
+                <div class="portfolio-item__text">
+                  <p>
+                    Una proposta urbana dal carattere scenografico, con aree wellness, piscina e affacci verso le colline.
+                    La residenza combina dimensioni generose, atmosfera privata e una forte identita architettonica.
+                  </p>
+                  <ul>
+                    <li>Piscina notturna</li>
+                    <li>Vista colline</li>
+                    <li>Spazi di rappresentanza</li>
+                    <li>Servizi privati integrati</li>
+                  </ul>
                 </div>
-                <button class="portfolio-carousel__button portfolio-carousel__button--next" type="button" aria-label="Immagine successiva">›</button>
+  
+                <div class="portfolio-carousel" data-carousel>
+                  <button class="portfolio-carousel__button portfolio-carousel__button--prev" type="button" aria-label="Immagine precedente">‹</button>
+                  <div class="portfolio-carousel__track">
+                    <img loading="lazy" decoding="async" class="is-active" src="assets/img/pacioli_B52/B52_01.jpg" alt="Palazzo Pacioli immagine 1" />
+                    <img loading="lazy" decoding="async" src="assets/img/pacioli_B52/B52_02.jpg" alt="Palazzo Pacioli immagine 2" />
+                    <img loading="lazy" decoding="async" src="assets/img/pacioli_B52/B52_03.jpg" alt="Palazzo Pacioli immagine 3" />
+                    <img loading="lazy" decoding="async" src="assets/img/pacioli_B52/B52_04.jpg" alt="Palazzo Pacioli immagine 4" />
+                    <img loading="lazy" decoding="async" src="assets/img/pacioli_B52/B52_05.jpg" alt="Palazzo Pacioli immagine 5" />
+                    <img loading="lazy" decoding="async" src="assets/img/pacioli_B52/B52_06.jpg" alt="Palazzo Pacioli immagine 6" />
+                    <img loading="lazy" decoding="async" src="assets/img/pacioli_B52/B52_07.jpg" alt="Palazzo Pacioli immagine 7" />
+                  </div>
+                  <button class="portfolio-carousel__button portfolio-carousel__button--next" type="button" aria-label="Immagine successiva">›</button>
+                </div>
               </div>
             </div>
           </article>
@@ -272,7 +305,7 @@
             <textarea id="contact-message" name="message" rows="4" placeholder="Budget, area e tempistiche"></textarea>
           </label>
 
-          <button class="submit-button" type="submit">Invia richiesta</button>
+          <button class="submit-button" type="submit"><span>Invia richiesta</span></button>
           <p class="form-status" role="status" data-form-status></p>
         </form>
       </section>
